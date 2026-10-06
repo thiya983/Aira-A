@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THISHA AI — 100% Offline Intelligent Chatbot</title>
+  <meta name="description" content="THISHA AI is an intelligent, high-performance, 100% offline chatbot with real-time math, dynamic date/time, Tanglish & English support, and rich knowledge base." />
+  
+  <style>
+    /* ==========================================================================
+       CSS RESET & THEME VARIABLES (MODERN DARK THEME)
+       ========================================================================== */
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #111726;
+      --bg-surface: #172033;
+      --bg-surface-hover: #1e2a42;
+      --bg-glass: rgba(17, 24, 39, 0.75);
+      
+      --accent-primary: #6366f1;
+      --accent-primary-hover: #4f46e5;
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --text-highlight: #c7d2fe;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-bright: rgba(99, 102, 241, 0.35);
+      
+      --user-bubble-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      --bot-bubble-bg: rgba(23, 32, 51, 0.9);
+      
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+      --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(217, 70, 239, 0.09) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Main Container */
+    .app-container {
+      width: 100%;
+      max-width: 1050px;
+      height: 94vh;
+      max-height: 920px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ==========================================================================
+       HEADER STYLES
+       ========================================================================== */
+    .chat-header {
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      z-index: 10;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .brand-avatar svg {
+      width: 24px;
+      height: 24px;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .brand-avatar::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      background: var(--accent-emerald);
+      border: 2px solid var(--bg-surface);
+      border-radius: var(--radius-full);
+    }
+
+    .brand-info h1 {
+      font-size: 1.18rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      -webkit-text-fill-color: var(--accent-emerald);
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-btn {
+      background: var(--bg-surface-hover);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .header-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .header-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--text-main);
+      border-color: var(--border-bright);
+      transform: translateY(-1px);
+    }
+
+    .header-btn.danger:hover {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border-color: rgba(244, 63, 94, 0.3);
+    }
+
+    /* ==========================================================================
+       CHAT MESSAGES VIEWPORT
+       ========================================================================== */
+    .chat-messages {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-full);
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.3);
+    }
+
+    /* Welcome Hero Card */
+    .welcome-hero {
+      background: linear-gradient(145deg, rgba(23, 32, 51, 0.7), rgba(17, 24, 39, 0.9));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      text-align: center;
+      margin-bottom: 8px;
+      animation: fadeIn 0.4s ease-out;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .welcome-icon-wrap {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 12px;
+      background: var(--accent-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .welcome-icon-wrap svg {
+      width: 28px;
+      height: 28px;
+      color: white;
+    }
+
+    .welcome-hero h2 {
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .welcome-hero p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+
+    .chips-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .suggestion-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .chip-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-highlight);
+      padding: 7px 13px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .chip-btn:hover {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    }
+
+    /* Message Rows */
+    .message-row {
+      display: flex;
+      gap: 12px;
+      max-width: 82%;
+      animation: messageSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .message-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-row.bot {
+      align-self: flex-start;
+    }
+
+    .avatar-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .avatar-icon.bot-avatar {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+    }
+
+    .avatar-icon.user-avatar {
+      background: #374151;
+      color: #e5e7eb;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .avatar-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .message-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .message-bubble {
+      padding: 13px 18px;
+      border-radius: var(--radius-md);
+      font-size: 0.93rem;
+      line-height: 1.55;
+      position: relative;
+      word-break: break-word;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .message-row.user .message-bubble {
+      background: var(--user-bubble-bg);
+      color: white;
+      border-bottom-right-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .message-row.bot .message-bubble {
+      background: var(--bot-bubble-bg);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--accent-primary);
+    }
+
+    .message-bubble p {
+      margin-bottom: 8px;
+    }
+
+    .message-bubble p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message-bubble strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .message-bubble ul, .message-bubble ol {
+      margin: 8px 0 8px 20px;
+    }
+
+    .message-bubble li {
+      margin-bottom: 4px;
+    }
+
+    .message-bubble code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .message-bubble pre {
+      background: rgba(10, 13, 20, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin: 8px 0;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #a5f3fc;
+    }
+
+    .message-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      padding: 0 4px;
+    }
+
+    .message-row.user .message-meta {
+      justify-content: flex-end;
+    }
+
+    .copy-msg-btn, .speech-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      transition: all 0.2s;
+    }
+
+    .copy-msg-btn:hover, .speech-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .copy-msg-btn svg, .speech-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Typing Animation */
+    .typing-indicator-row {
+      display: flex;
+      gap: 12px;
+      align-self: flex-start;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .typing-bubble {
+      background: var(--bot-bubble-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      border-bottom-left-radius: 4px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      animation: bounceDot 1.3s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ==========================================================================
+       CHAT INPUT & CONTROLS
+       ========================================================================== */
+    .chat-input-container {
+      padding: 16px 24px 20px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      position: relative;
+    }
+
+    .input-box-wrapper {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-box-wrapper:focus-within {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .chat-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: none;
+      line-height: 1.45;
+      max-height: 140px;
+      min-height: 24px;
+      padding: 4px 4px 4px 0;
+    }
+
+    .chat-textarea::placeholder {
+      color: var(--text-dim);
+    }
+
+    .send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+    }
+
+    .send-btn:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    .send-btn svg {
+      width: 18px;
+      height: 18px;
+      transform: translateX(1px);
+    }
+
+    .input-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding: 0 4px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .input-hint {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .kbd-key {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       MODAL & TOASTS
+       ========================================================================== */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 600px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+    }
+
+    .modal-close-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .modal-body h4 {
+      color: #ffffff;
+      margin: 14px 0 6px;
+      font-size: 0.95rem;
+    }
+
+    .modal-body h4:first-child {
+      margin-top: 0;
+    }
+
+    .modal-body ul {
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .toast {
+      position: absolute;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--accent-primary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       ANIMATIONS
+       ========================================================================== */
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.6)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(217, 70, 239, 0.8)); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes messageSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes bounceDot {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-7px); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 0;
+      }
+      .app-container {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+      .chat-header {
+        padding: 12px 16px;
+      }
+      .chat-messages {
+        padding: 16px;
+      }
+      .message-row {
+        max-width: 92%;
+      }
+      .chat-input-container {
+        padding: 12px 16px 14px;
+      }
+      .header-btn span {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="chat-header">
+      <div class="brand-section">
+        <div class="brand-avatar" title="THISHA AI - Offline Intelligence">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>THISHA AI <span class="brand-badge">Offline Ready</span></h1>
+          <div class="brand-subtitle">
+            <span>Dynamic Math • Time • Science & GK • Tanglish</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="infoBtn" class="header-btn" title="View Capabilities & Guide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>Topics</span>
+        </button>
+
+        <button id="clearChatBtn" class="header-btn danger" title="Clear Chat History">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>Clear</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Toast Feedback Notification -->
+    <div id="toast" class="toast">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span id="toastMsg">Action completed</span>
+    </div>
+
+    <!-- Chat Messages Viewport -->
+    <main class="chat-messages" id="chatMessages" role="log" aria-live="polite">
+      
+      <!-- Welcome Hero Card -->
+      <section class="welcome-hero" id="welcomeHero">
+        <div class="welcome-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <h2>Vanakkam! I am THISHA AI</h2>
+        <p>Your ultra-fast, 100% offline smart assistant. I can calculate math, provide dynamic live time & date, and answer 65+ topics in English & Tanglish!</p>
+        
+        <div class="chips-label">Try asking anything or tap a prompt:</div>
+        <div class="suggestion-chips">
+          <button class="chip-btn" data-query="what is the time">🕒 What time is it?</button>
+          <button class="chip-btn" data-query="what is 25 * 4">🧮 What is 25 * 4?</button>
+          <button class="chip-btn" data-query="20% of 500">📊 20% of 500</button>
+          <button class="chip-btn" data-query="what is AI">🤖 What is AI?</button>
+          <button class="chip-btn" data-query="tell me about Chandrayaan 3">🚀 Chandrayaan 3</button>
+          <button class="chip-btn" data-query="health tips for eye strain">👁️ Eye strain tip</button>
+          <button class="chip-btn" data-query="tell me a joke">😄 Tell me a joke</button>
+          <button class="chip-btn" data-query="eppadi irukinga">✨ Eppadi irukinga?</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Typing Indicator -->
+    <div id="typingIndicator" class="typing-indicator-row" style="display: none; padding: 0 24px 12px;">
+      <div class="avatar-icon bot-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+          <line x1="9" y1="9" x2="9.01" y2="9"></line>
+          <line x1="15" y1="9" x2="15.01" y2="9"></line>
+        </svg>
+      </div>
+      <div class="typing-bubble">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+
+    <!-- Input Box -->
+    <footer class="chat-input-container">
+      <form id="chatForm" onsubmit="return false;">
+        <div class="input-box-wrapper">
+          <textarea
+            id="userInput"
+            class="chat-textarea"
+            rows="1"
+            placeholder="Message THISHA AI... (e.g. 'what is 25 * 4', 'time', 'AI basics')"
+            aria-label="Chat message input"
+            autocomplete="off"
+            spellcheck="false"
+          ></textarea>
+          
+          <button type="submit" id="sendBtn" class="send-btn" title="Send message" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="input-footer">
+          <div class="input-hint">
+            <span><span class="kbd-key">Enter</span> to send</span>
+            <span><span class="kbd-key">Shift</span> + <span class="kbd-key">Enter</span> for new line</span>
+          </div>
+          <div>
+            <span>100% Offline • Zero Backend • Safe Local Storage</span>
+          </div>
+        </div>
+      </form>
+    </footer>
+
+    <!-- Topics & Capabilities Modal -->
+    <div id="infoModal" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            THISHA AI Knowledge & Features
+          </h3>
+          <button id="closeModalBtn" class="modal-close-btn" title="Close modal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h4>🕒 Real-Time JavaScript Dynamic Responses</h4>
+          <p>Ask for live local time, date, day of week, month, year, or greetings based on time of day (morning, afternoon, evening, night).</p>
+
+          <h4>🧮 Built-in Natural Language Math Engine</h4>
+          <ul>
+            <li>Basic math: <code>what is 25 * 4</code>, <code>10 + 5</code>, <code>150 / 3</code></li>
+            <li>Percentages: <code>20% of 500</code>, <code>15 percent of 800</code></li>
+            <li>Roots & Powers: <code>sqrt of 81</code>, <code>square root of 144</code>, <code>2 ^ 8</code></li>
+          </ul>
+
+          <h4>🤖 65+ Built-in Q&A Knowledge Base</h4>
+          <ul>
+            <li><strong>AI & Machine Learning:</strong> LLMs, Deep Learning, Neural Nets, NLP, Computer Vision, Overfitting, Generative AI, RAG.</li>
+            <li><strong>Programming & Tech:</strong> Python, JS, React, SQL, Git, REST APIs, Docker, DSA, OOP, Linux.</li>
+            <li><strong>Science & Space:</strong> Relativity, Black Holes, DNA, Photosynthesis, Speed of Light, Quantum Mechanics.</li>
+            <li><strong>India Facts:</strong> ISRO, Chandrayaan-3, Capitals, Chola Temples, UPI, Silicon Valley of India.</li>
+            <li><strong>Health & Wellness:</strong> Eye strain 20-20-20 rule, hydration, posture, sleep hygiene, breathing.</li>
+          </ul>
+
+          <h4>✨ Tanglish & English Bilingual Support</h4>
+          <p>Chat naturally in English or Tanglish: <em>"neram enna", "eppadi irukinga", "time sollu", "python pathi sollu", "isro pathi sollu", "nandri"</em>.</p>
+
+          <h4>🔒 Complete Privacy & Storage</h4>
+          <p>Runs 100% in your browser memory. Chat history is safely stored in your local browser <code>localStorage</code>.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== */
+  -->
+  <script>
+    /**
+     * THISHA AI — 100% Offline Intelligent Chatbot Engine
+     * Fully self-contained, modular, and easily extensible.
+     */
+
+    // ==========================================================================
+    // 1. KNOWLEDGE BASE (65+ Comprehensive Q&A Entries with English & Tanglish)
+    // ==========================================================================
+    const KNOWLEDGE_BASE = [
+      // ---------------- AI & MACHINE LEARNING (15 Entries) ----------------
+      {
+        id: "ai_intro",
+        category: "Artificial Intelligence",
+        keywords: ["what is ai", "artificial intelligence", "define ai", "ai definition", "ai meaning", "explain ai"],
+        tanglishKeywords: ["ai na enna", "artificial intelligence na enna", "ai pathi sollu", "ai விளக்கம்", "ai enbathu enna"],
+        question: "What is Artificial Intelligence (AI)?",
+        answer: "**Artificial Intelligence (AI)** is the simulation of human intelligence by computer systems and algorithms. It allows machines to perceive their environment, learn from experience, reason through complex problems, and make autonomous decisions. AI powers modern technologies like language translation, autonomous driving, medical diagnostics, and smart recommendation engines."
+      },
+      {
+        id: "machine_learning",
+        category: "Artificial Intelligence",
+        keywords: ["what is machine learning", "machine learning", "ml", "define ml", "how ml works", "types of ml"],
+        tanglishKeywords: ["machine learning na enna", "ml na enna", "ml pathi sollu", "machine learning eppadi vela seiyum"],
+        question: "What is Machine Learning?",
+        answer: "**Machine Learning (ML)** is a subset of AI where computers learn patterns from historical training data to make predictions or decisions without being explicitly programmed with hardcoded rules. The three primary types are:\n• **Supervised Learning:** Learning from labeled input-output pairs.\n• **Unsupervised Learning:** Discovering hidden patterns or clusters in unlabeled data.\n• **Reinforcement Learning:** Learning optimal policies through rewards and penalties."
+      },
+      {
+        id: "deep_learning",
+        category: "Artificial Intelligence",
+        keywords: ["deep learning", "what is deep learning", "dl", "deep neural networks", "how deep learning works"],
+        tanglishKeywords: ["deep learning na enna", "dl pathi sollu", "deep learning explain pannu"],
+        question: "What is Deep Learning?",
+        answer: "**Deep Learning (DL)** is a specialized branch of Machine Learning based on multi-layered Artificial Neural Networks. By passing data through multiple hidden layers, deep learning models can automatically extract high-level representations from complex unstructured data such as images, voice, video, and text."
+      },
+      {
+        id: "llm_concept",
+        category: "Artificial Intelligence",
+        keywords: ["what is llm", "large language model", "llms", "how llm works", "gpt", "gemini", "claude"],
+        tanglishKeywords: ["llm na enna", "large language model pathi sollu", "llm eppadi work aagum", "gpt na enna"],
+        question: "What is a Large Language Model (LLM)?",
+        answer: "A **Large Language Model (LLM)** is a deep neural network (typically using the Transformer architecture) trained on billions to trillions of words from the internet, books, and code. LLMs can generate coherent human-like text, summarize articles, translate between languages, answer questions, and generate computer code."
+      },
+      {
+        id: "nlp_concept",
+        category: "Artificial Intelligence",
+        keywords: ["what is nlp", "natural language processing", "nlp meaning", "text processing ai"],
+        tanglishKeywords: ["nlp na enna", "natural language processing pathi sollu", "nlp enral enna"],
+        question: "What is Natural Language Processing (NLP)?",
+        answer: "**Natural Language Processing (NLP)** is an interdisciplinary field of computer science and AI focused on enabling machines to understand, interpret, process, and generate human languages. Applications include sentiment analysis, machine translation, voice assistants, spam filtering, and chatbots."
+      },
+      {
+        id: "computer_vision",
+        category: "Artificial Intelligence",
+        keywords: ["what is computer vision", "computer vision", "cv in ai", "image recognition", "object detection"],
+        tanglishKeywords: ["computer vision na enna", "image recognition pathi sollu", "cv ai na enna"],
+        question: "What is Computer Vision?",
+        answer: "**Computer Vision** enables computers to derive meaningful information and insight from digital images, videos, and visual inputs. It powers technologies such as facial recognition, autonomous self-driving vehicles, medical imaging analysis, and industrial robotic automation."
+      },
+      {
+        id: "generative_ai",
+        category: "Artificial Intelligence",
+        keywords: ["generative ai", "gen ai", "what is generative ai", "genai", "generative models"],
+        tanglishKeywords: ["generative ai na enna", "gen ai pathi sollu", "puthiya content create panra ai"],
+        question: "What is Generative AI?",
+        answer: "**Generative AI (GenAI)** refers to artificial intelligence systems capable of creating brand-new original content—including text, images, audio, video, 3D models, and code—by learning statistical patterns from vast existing datasets."
+      },
+      {
+        id: "neural_networks",
+        category: "Artificial Intelligence",
+        keywords: ["neural network", "neural networks", "ann", "what is neural network", "artificial neuron"],
+        tanglishKeywords: ["neural network na enna", "neural network eppadi vela seiyum", "ann pathi sollu"],
+        question: "What are Artificial Neural Networks (ANN)?",
+        answer: "**Artificial Neural Networks (ANNs)** are computational architectures inspired by biological neural networks in the human brain. They consist of connected nodes (neurons) structured in layers: an **Input Layer**, one or more **Hidden Layers**, and an **Output Layer**. Each node multiplies inputs by learned weights, adds a bias, and passes the result through an activation function."
+      },
+      {
+        id: "transformers_ai",
+        category: "Artificial Intelligence",
+        keywords: ["transformer architecture", "attention mechanism", "self attention in ai", "what is transformer in ai"],
+        tanglishKeywords: ["transformer ai na enna", "attention mechanism pathi sollu", "transformer model eppadi work aagum"],
+        question: "What is the Transformer Architecture in AI?",
+        answer: "Introduced by Google researchers in 2017 in the paper *'Attention Is All You Need'*, the **Transformer** architecture revolutionized AI. By utilizing **Self-Attention mechanisms**, it processes all words in a sequence concurrently in parallel, capturing long-range dependencies far more effectively than traditional RNNs."
+      },
+      {
+        id: "overfitting_underfitting",
+        category: "Artificial Intelligence",
+        keywords: ["overfitting", "underfitting", "overfitting vs underfitting", "bias variance tradeoff"],
+        tanglishKeywords: ["overfitting na enna", "underfitting na enna", "model accuracy problems"],
+        question: "What is Overfitting and Underfitting in Machine Learning?",
+        answer: "• **Overfitting:** The model memorizes noise and specific details in training data so closely that it performs poorly on new unseen data (high variance).\n• **Underfitting:** The model is overly simplistic and cannot capture underlying data trends even on training data (high bias)."
+      },
+      {
+        id: "ai_hallucination",
+        category: "Artificial Intelligence",
+        keywords: ["ai hallucination", "hallucination in ai", "why ai makes up facts", "ai lying"],
+        tanglishKeywords: ["ai hallucination na enna", "ai poi solluma", "ai thappana thagaval kudukuma"],
+        question: "What is AI Hallucination?",
+        answer: "**AI Hallucination** occurs when a generative AI model generates plausible-sounding but factually inaccurate or fabricated information with high confidence. It arises because LLMs generate text based on probabilistic token predictions rather than an explicit verified world-fact database."
+      },
+      {
+        id: "reinforcement_learning",
+        category: "Artificial Intelligence",
+        keywords: ["reinforcement learning", "rl", "what is reinforcement learning", "rlhf", "reward function"],
+        tanglishKeywords: ["reinforcement learning na enna", "rl pathi sollu", "rlhf na enna"],
+        question: "What is Reinforcement Learning (RL)?",
+        answer: "**Reinforcement Learning (RL)** is an AI paradigm where an autonomous agent learns to make optimal sequences of decisions by interacting with an environment. The agent receives **rewards** for beneficial actions and **penalties** for errors, optimizing its policy to maximize cumulative rewards."
+      },
+      {
+        id: "prompt_engineering",
+        category: "Artificial Intelligence",
+        keywords: ["prompt engineering", "how to write prompts", "system prompt", "few shot prompting", "chain of thought"],
+        tanglishKeywords: ["prompt engineering na enna", "prompt eppadi ezhudhuvadhu", "prompt tips"],
+        question: "What is Prompt Engineering?",
+        answer: "**Prompt Engineering** is the practice of structuring, refining, and designing textual inputs (prompts) to guide Generative AI models to produce the most accurate, contextually relevant, and useful outputs. Techniques include Few-Shot Prompting, Chain-of-Thought reasoning, and Role-Based Prompting."
+      },
+      {
+        id: "supervised_vs_unsupervised",
+        category: "Artificial Intelligence",
+        keywords: ["supervised vs unsupervised", "supervised learning", "unsupervised learning", "difference supervised unsupervised"],
+        tanglishKeywords: ["supervised learning na enna", "unsupervised learning na enna", "rendukkum enna vithyasam"],
+        question: "What is the difference between Supervised and Unsupervised Learning?",
+        answer: "• **Supervised Learning:** Trains models using **labeled data** (input $X$ paired with known output $Y$), such as spam email classification or house price prediction.\n• **Unsupervised Learning:** Trains models on **unlabeled data** to uncover natural clusters, anomalies, or hidden patterns (e.g., customer segmentation, PCA)."
+      },
+      {
+        id: "rag_ai",
+        category: "Artificial Intelligence",
+        keywords: ["what is rag", "retrieval augmented generation", "rag in ai", "vector database"],
+        tanglishKeywords: ["rag na enna", "retrieval augmented generation pathi sollu", "vector database na enna"],
+        question: "What is Retrieval-Augmented Generation (RAG)?",
+        answer: "**Retrieval-Augmented Generation (RAG)** is an AI framework that enhances Large Language Models by fetching relevant, up-to-date facts from an external knowledge base or vector database before generating a response, drastically reducing hallucinations and grounding answers in verifiable data."
+      },
+
+      // ---------------- PROGRAMMING & WEB DEVELOPMENT (14 Entries) ----------------
+      {
+        id: "python_lang",
+        category: "Programming",
+        keywords: ["what is python", "python programming", "why python is popular", "python features", "learn python"],
+        tanglishKeywords: ["python na enna", "python pathi sollu", "python easy ah", "python language pathi sollunga"],
+        question: "What is Python?",
+        answer: "**Python** is a high-level, interpreted, general-purpose programming language celebrated for its clear, readable syntax and rich ecosystem. It is the dominant language for Artificial Intelligence, Machine Learning, Data Science, Web Development (FastAPI, Django), and Automation."
+      },
+      {
+        id: "javascript_lang",
+        category: "Programming",
+        keywords: ["what is javascript", "javascript", "js", "js features", "why use javascript", "ecmascript"],
+        tanglishKeywords: ["javascript na enna", "js pathi sollu", "javascript eppadi use aagum", "js language"],
+        question: "What is JavaScript?",
+        answer: "**JavaScript (JS)** is the core programming language of the web. It enables dynamic interactivity, animations, and event handling on client-side browsers and can also power scalable server-side applications via runtimes like Node.js, Deno, and Bun."
+      },
+      {
+        id: "html_css",
+        category: "Programming",
+        keywords: ["what is html", "what is css", "html and css", "frontend basics", "web structure"],
+        tanglishKeywords: ["html css na enna", "web development basics sollu", "html pathi sollu", "css pathi sollu"],
+        question: "What are HTML and CSS?",
+        answer: "• **HTML (HyperText Markup Language):** The structural foundation of web pages, defining elements like headings, paragraphs, links, and forms.\n• **CSS (Cascading Style Sheets):** Controls the visual design, colors, typography, flexbox/grid layouts, animations, and responsive behavior across screen sizes."
+      },
+      {
+        id: "git_vcs",
+        category: "Programming",
+        keywords: ["what is git", "git version control", "github vs git", "how git works", "git commit", "git branch"],
+        tanglishKeywords: ["git na enna", "github na enna", "git eppadi use panradhu", "version control na enna"],
+        question: "What is Git and Version Control?",
+        answer: "**Git** is a distributed version control system that tracks source code revisions over time, enabling developers to create branches, merge changes, and roll back errors. **GitHub** and GitLab are cloud hosting platforms for remote Git repositories, code reviews, and CI/CD workflows."
+      },
+      {
+        id: "api_concept",
+        category: "Programming",
+        keywords: ["what is api", "application programming interface", "how api works", "rest api", "endpoint"],
+        tanglishKeywords: ["api na enna", "api eppadi vela seiyum", "api pathi sollu", "rest api na enna"],
+        question: "What is an API (Application Programming Interface)?",
+        answer: "An **API** is a defined set of rules, protocols, and endpoints that allow different software systems to communicate and exchange data securely. For example, a mobile weather app requests live weather forecasts from a remote server using a REST or GraphQL API."
+      },
+      {
+        id: "sql_database",
+        category: "Programming",
+        keywords: ["what is sql", "relational database", "sql vs nosql", "database queries", "rdbms", "postgresql"],
+        tanglishKeywords: ["sql na enna", "database na enna", "sql pathi sollu", "nosql rendukkum enna vithyasam"],
+        question: "What is SQL and Relational Databases?",
+        answer: "• **SQL (Structured Query Language):** The standard language for querying and managing relational databases (RDBMS) like PostgreSQL, MySQL, and SQLite, where data is organized into structured tables with relationships and ACID transactions.\n• **NoSQL:** Non-relational databases (e.g., MongoDB, Redis) designed for flexible JSON documents, key-values, or graphs."
+      },
+      {
+        id: "react_js",
+        category: "Programming",
+        keywords: ["what is react", "react js", "reactjs", "why react", "virtual dom", "react hooks"],
+        tanglishKeywords: ["react na enna", "reactjs pathi sollu", "react framework ah library ah"],
+        question: "What is React.js?",
+        answer: "**React** is a declarative JavaScript library developed by Meta for building modern user interfaces. It is built around reusable **component-driven architecture**, one-way data binding, state management with Hooks, and a fast **Virtual DOM** reconciliation algorithm."
+      },
+      {
+        id: "frontend_vs_backend",
+        category: "Programming",
+        keywords: ["frontend vs backend", "full stack developer", "difference between frontend and backend", "client vs server"],
+        tanglishKeywords: ["frontend backend difference enna", "full stack na enna", "client server vithyasam"],
+        question: "What is the difference between Frontend and Backend?",
+        answer: "• **Frontend (Client-Side):** The user-facing interface rendered in the browser (built with HTML, CSS, JavaScript, React, Vue).\n• **Backend (Server-Side):** The engine handling core business logic, user authentication, database operations, background tasks, and APIs (built with Python, Node.js, Java, Go, etc.).\n• **Full Stack:** Developers proficient in both frontend and backend development."
+      },
+      {
+        id: "docker_cloud",
+        category: "Programming",
+        keywords: ["what is docker", "containerization", "cloud computing", "containers vs vm", "dockerfile"],
+        tanglishKeywords: ["docker na enna", "containers na enna", "docker eppadi work aagum"],
+        question: "What is Docker and Containerization?",
+        answer: "**Docker** packages an application along with all of its libraries, system tools, and runtime dependencies into lightweight, self-contained **containers**. This ensures the application runs identically across local development laptops, staging environments, and production cloud servers."
+      },
+      {
+        id: "oop_concept",
+        category: "Programming",
+        keywords: ["what is oop", "object oriented programming", "oop pillars", "encapsulation inheritance polymorphism abstraction"],
+        tanglishKeywords: ["oop na enna", "object oriented programming pathi sollu", "oop 4 pillars enna"],
+        question: "What is Object-Oriented Programming (OOP)?",
+        answer: "**Object-Oriented Programming (OOP)** is a paradigm organizing software design around 'objects' containing data fields and methods. The 4 core pillars are:\n1. **Encapsulation:** Bundling data and methods, restricting direct access.\n2. **Abstraction:** Hiding internal complexity and exposing clean interfaces.\n3. **Inheritance:** Deriving new classes from existing parent classes.\n4. **Polymorphism:** Allowing different classes to respond to the same interface in unique ways."
+      },
+      {
+        id: "data_structures",
+        category: "Programming",
+        keywords: ["data structures", "dsa", "algorithms", "array linked list tree graph hash table"],
+        tanglishKeywords: ["dsa na enna", "data structures pathi sollu", "algorithms na enna"],
+        question: "What are Data Structures and Algorithms (DSA)?",
+        answer: "• **Data Structures:** Specific ways of organizing, storing, and managing data in memory for efficient access (e.g., Arrays, Linked Lists, Stacks, Queues, Hash Tables, Trees, Graphs).\n• **Algorithms:** Step-by-step computational procedures for solving problems or manipulating data (e.g., Sorting, Binary Search, Dijkstra's algorithm)."
+      },
+      {
+        id: "async_await",
+        category: "Programming",
+        keywords: ["async await", "javascript promises", "synchronous vs asynchronous", "event loop js"],
+        tanglishKeywords: ["async await na enna", "promises in javascript", "event loop eppadi work aagum"],
+        question: "What is Asynchronous Programming in JavaScript?",
+        answer: "**Asynchronous programming** allows JavaScript to execute time-consuming operations (like fetching network APIs or reading files) in the background without blocking the main UI thread. Modern JS handles this elegantly using **Promises** and **async/await** syntax."
+      },
+      {
+        id: "cybersecurity_basics",
+        category: "Programming",
+        keywords: ["cybersecurity", "https vs http", "ssl tls encryption", "how to make passwords secure", "firewall"],
+        tanglishKeywords: ["cybersecurity na enna", "https pathi sollu", "password safe ah vekka tips"],
+        question: "What are key cybersecurity fundamentals?",
+        answer: "• **HTTPS / TLS:** Encrypts data in transit between browser and server, preventing eavesdropping.\n• **Strong Passwords:** Use at least 12–16 characters with a mix of letters, numbers, and symbols, alongside Multi-Factor Authentication (MFA).\n• **Zero Trust:** Never trust, always verify every request and device."
+      },
+      {
+        id: "linux_basics",
+        category: "Programming",
+        keywords: ["what is linux", "linux commands", "terminal commands", "bash commands", "linux os"],
+        tanglishKeywords: ["linux na enna", "linux commands sollu", "terminal eppadi use panradhu"],
+        question: "What is Linux and why is it essential for developers?",
+        answer: "**Linux** is an open-source, Unix-like operating system kernel powering the vast majority of web servers, cloud infrastructure, supercomputers, and Android devices. Essential commands include `ls` (list files), `cd` (change directory), `grep` (search text), `chmod` (permissions), and `sudo` (admin rights)."
+      },
+
+      // ---------------- SCIENCE & ASTRONOMY (12 Entries) ----------------
+      {
+        id: "photosynthesis",
+        category: "Science",
+        keywords: ["what is photosynthesis", "photosynthesis process", "how plants make food", "chlorophyll"],
+        tanglishKeywords: ["photosynthesis na enna", "plants epdi saapadu tayarikkum", "oli serkkai enral enna"],
+        question: "What is Photosynthesis?",
+        answer: "**Photosynthesis** is the biochemical process by which green plants, algae, and certain bacteria convert sunlight, water ($H_2O$), and carbon dioxide ($CO_2$) into glucose (sugar energy) and release oxygen ($O_2$) as a vital byproduct using the pigment **chlorophyll**."
+      },
+      {
+        id: "theory_relativity",
+        category: "Science",
+        keywords: ["theory of relativity", "einstein relativity", "e=mc2", "general relativity", "special relativity", "spacetime"],
+        tanglishKeywords: ["relativity theory na enna", "einstein theory pathi sollu", "e=mc2 vilakkam"],
+        question: "What is Albert Einstein's Theory of Relativity?",
+        answer: "Albert Einstein's Theory of Relativity comprises two pillars:\n1. **Special Relativity (1905):** The speed of light in vacuum is constant for all observers regardless of motion, and mass and energy are equivalent ($E = mc^2$).\n2. **General Relativity (1915):** Gravity is not an invisible pulling force, but the physical curvature of four-dimensional **spacetime** caused by mass and energy."
+      },
+      {
+        id: "dna_genetics",
+        category: "Science",
+        keywords: ["what is dna", "deoxyribonucleic acid", "genes", "dna structure", "double helix", "chromosomes"],
+        tanglishKeywords: ["dna na enna", "genes pathi sollu", "marubanu na enna"],
+        question: "What is DNA?",
+        answer: "**DNA (Deoxyribonucleic Acid)** is the double-helix molecule carrying genetic instructions for the development, functioning, growth, and reproduction of all living organisms. DNA consists of four chemical nucleotide bases: **Adenine (A), Thymine (T), Guanine (G), and Cytosine (C)**."
+      },
+      {
+        id: "black_hole",
+        category: "Science",
+        keywords: ["what is a black hole", "black holes", "event horizon", "singularity", "supermassive black hole"],
+        tanglishKeywords: ["black hole na enna", "karunthulai na enna", "black hole pathi sollu"],
+        question: "What is a Black Hole?",
+        answer: "A **Black Hole** is an astronomical region in spacetime where gravitational pull is so intense that nothing—not even particles or electromagnetic radiation like light—can escape its boundary, known as the **Event Horizon**. At its center lies an infinitely dense gravitational **Singularity**."
+      },
+      {
+        id: "speed_of_light",
+        category: "Science",
+        keywords: ["speed of light", "how fast is light", "light speed in km", "speed of light in vacuum"],
+        tanglishKeywords: ["oli vegathoda speed enna", "speed of light evlo", "light speed sollu"],
+        question: "What is the Speed of Light?",
+        answer: "The speed of light in a vacuum is exactly **299,792,458 meters per second** (approximately **300,000 km/s** or **186,282 miles per second**). It represents the cosmic universal speed limit according to modern physics."
+      },
+      {
+        id: "gravity_concept",
+        category: "Science",
+        keywords: ["what is gravity", "gravitational force", "isaac newton gravity", "why things fall"],
+        tanglishKeywords: ["gravity na enna", "eerpu visai na enna", "bhoomi eerpu visai"],
+        question: "What is Gravity?",
+        answer: "**Gravity** is the fundamental interaction causing all things with mass or energy to be attracted toward one another. On Earth, gravity gives weight to physical objects and causes them to fall toward the ground at an acceleration of approximately $9.81 \\text{ m/s}^2$."
+      },
+      {
+        id: "mitochondria",
+        category: "Science",
+        keywords: ["what is mitochondria", "powerhouse of the cell", "atp production", "cellular respiration"],
+        tanglishKeywords: ["mitochondria na enna", "powerhouse of cell na enna", "cell energy eppadi varudhu"],
+        question: "What is Mitochondria?",
+        answer: "**Mitochondria** are membrane-bound cellular organelles famously called the **'Powerhouse of the Cell'** because they generate most of the chemical energy required for cellular biochemical processes by synthesizing **Adenosine Triphosphate (ATP)**."
+      },
+      {
+        id: "solar_system",
+        category: "Science",
+        keywords: ["solar system planets", "how many planets", "planets in solar system", "order of planets"],
+        tanglishKeywords: ["solar system pathi sollu", "suriya kudumbam ethanai planets", "planets peyer sollu"],
+        question: "What are the planets in our Solar System?",
+        answer: "Our Solar System features **8 major planets** orbiting the Sun in order of distance:\n1. **Mercury**\n2. **Venus**\n3. **Earth**\n4. **Mars**\n5. **Jupiter** (Largest)\n6. **Saturn** (Ring system)\n7. **Uranus**\n8. **Neptune**\n*(Pluto was reclassified as a dwarf planet in 2006)*."
+      },
+      {
+        id: "quantum_mechanics",
+        category: "Science",
+        keywords: ["what is quantum mechanics", "quantum physics", "schrodinger", "quantum superposition", "quantum entanglement"],
+        tanglishKeywords: ["quantum physics na enna", "quantum mechanics pathi sollu", "quantum superposition na enna"],
+        question: "What is Quantum Mechanics?",
+        answer: "**Quantum Mechanics** is the fundamental branch of physics describing the behavior of nature at the atomic and subatomic scale, where energy is quantized and particles exhibit **wave-particle duality**, probabilistic states (**superposition**), and **entanglement**."
+      },
+      {
+        id: "human_brain_facts",
+        category: "Science",
+        keywords: ["human brain facts", "how many neurons in brain", "brain power", "cerebrum"],
+        tanglishKeywords: ["moolai pathi sollu", "human brain facts tamil", "brain neurons evlo irukku"],
+        question: "Interesting facts about the Human Brain",
+        answer: "• The human brain contains approximately **86 billion neurons** with over 100 trillion synaptic connections.\n• Although it accounts for only about 2% of total body weight, it consumes **20% of the body's total energy and oxygen**.\n• It generates about 12 to 25 watts of electricity—enough to power a small LED bulb!"
+      },
+      {
+        id: "water_cycle",
+        category: "Science",
+        keywords: ["water cycle", "how rain forms", "evaporation condensation precipitation"],
+        tanglishKeywords: ["mazhai eppadi peiyudhu", "water cycle pathi sollu"],
+        question: "What is the Water Cycle?",
+        answer: "The **Water Cycle (Hydrological Cycle)** describes the continuous movement of water on, above, and below Earth's surface through four continuous stages:\n1. **Evaporation & Transpiration:** Solar heat turns water into vapor.\n2. **Condensation:** Vapor cools to form clouds.\n3. **Precipitation:** Water falls back as rain or snow.\n4. **Collection:** Runoff gathers in oceans, lakes, and aquifers."
+      },
+      {
+        id: "renewable_energy",
+        category: "Science",
+        keywords: ["renewable energy", "solar energy", "wind energy", "clean green energy"],
+        tanglishKeywords: ["renewable energy na enna", "solar power pathi sollu", "kaatru aalai"],
+        question: "What is Renewable Energy?",
+        answer: "**Renewable Energy** is energy derived from infinite natural resources that replenish themselves faster than they are consumed, such as **Solar Energy**, **Wind Power**, **Hydroelectric**, **Geothermal**, and **Tidal energy**, producing negligible greenhouse gases compared to fossil fuels."
+      },
+
+      // ---------------- INDIA FACTS & HERITAGE (12 Entries) ----------------
+      {
+        id: "capital_of_india",
+        category: "India Facts",
+        keywords: ["capital of india", "india capital", "what is the capital of india", "delhi capital"],
+        tanglishKeywords: ["india capital enna", "indiyavin thalainagaram enna", "india தலைநகரம்"],
+        question: "What is the capital of India?",
+        answer: "The capital of India is **New Delhi**."
+      },
+      {
+        id: "isro_space",
+        category: "India Facts",
+        keywords: ["what is isro", "indian space research organisation", "isro headquarters", "isro achievements", "isro chairman"],
+        tanglishKeywords: ["isro na enna", "isro pathi sollu", "isro headquarters enga irukku", "isro thalaivar"],
+        question: "What is ISRO?",
+        answer: "**ISRO (Indian Space Research Organisation)** is India's national space agency, founded on August 15, 1969 by Dr. Vikram Sarabhai and headquartered in **Bengaluru**. Renowned for its extraordinary cost efficiency, ISRO has launched legendary missions including Chandrayaan, Mangalyaan, and Aditya-L1."
+      },
+      {
+        id: "chandrayaan_3",
+        category: "India Facts",
+        keywords: ["chandrayaan 3", "chandrayaan", "moon mission india", "vikram lander", "pragyan rover", "national space day"],
+        tanglishKeywords: ["chandrayaan 3 pathi sollu", "chandrayaan moon landing", "vikram lander pragyan rover"],
+        question: "What is Chandrayaan-3 and its historic achievement?",
+        answer: "On **August 23, 2023**, ISRO's **Chandrayaan-3** made global space history when the *Vikram Lander* achieved a successful soft landing near the **lunar South Pole**. This made India the **1st nation to land near the Moon's South Pole** and the 4th country overall to land on the Moon. August 23 is now celebrated as **National Space Day** in India."
+      },
+      {
+        id: "silicon_valley_india",
+        category: "India Facts",
+        keywords: ["silicon valley of india", "it capital of india", "bengaluru tech hub", "bangalore it", "garden city"],
+        tanglishKeywords: ["india silicon valley edhu", "bangalore it hub", "bengaluru pathi sollu"],
+        question: "Which city is known as the Silicon Valley of India?",
+        answer: "**Bengaluru (Bangalore)** is famously known as the *Silicon Valley of India*. It is the country's primary technology and startup epicenter, hosting R&D centers for global tech giants, ISRO, and thousands of tech ventures."
+      },
+      {
+        id: "national_symbols_india",
+        category: "India Facts",
+        keywords: ["national symbols of india", "national animal of india", "national bird of india", "national flower of india", "national river", "national emblem"],
+        tanglishKeywords: ["india national symbols enna", "thesiya vilangu edhu", "thesiya paravai", "thesiya malar"],
+        question: "What are the National Symbols of India?",
+        answer: "• **National Animal:** Royal Bengal Tiger (*Panthera tigris*)\n• **National Bird:** Indian Peacock (*Pavo cristatus*)\n• **National Flower:** Lotus (*Nelumbo nucifera*)\n• **National Tree:** Banyan Tree (*Ficus benghalensis*)\n• **National River:** Ganga\n• **National Motto:** *Satyameva Jayate* (Truth Alone Triumphs)\n• **National Anthem:** *Jana Gana Mana* (by Rabindranath Tagore)"
+      },
+      {
+        id: "tamil_nadu_facts",
+        category: "India Facts",
+        keywords: ["tamil nadu capital", "about tamil nadu", "chennai facts", "chola temples", "tamil language age"],
+        tanglishKeywords: ["tamil nadu pathi sollu", "chennai capital", "tamil nadu temples", "tamil mozhi pathi sollu"],
+        question: "Tell me about Tamil Nadu.",
+        answer: "**Tamil Nadu** is a southern Indian state renowned for its ancient Dravidian temple architecture, classical arts, Carnatic music, and one of the world's longest-surviving classical languages: **Tamil**. Its capital is **Chennai**, historically known as the 'Detroit of Asia' for its major automobile and manufacturing industry."
+      },
+      {
+        id: "upi_payments",
+        category: "India Facts",
+        keywords: ["what is upi", "unified payments interface", "npci", "how upi works", "digital india payments"],
+        tanglishKeywords: ["upi na enna", "upi payments eppadi work aagum", "gpay phonepe pathi sollu", "digital payment india"],
+        question: "What is UPI (Unified Payments Interface)?",
+        answer: "**UPI (Unified Payments Interface)** is an instant real-time payment system engineered by the **National Payments Corporation of India (NPCI)**. It enables instant inter-bank money transfers 24/7 across smartphones using Virtual Payment Addresses (VPA / UPI ID) or QR codes."
+      },
+      {
+        id: "invention_of_zero",
+        category: "India Facts",
+        keywords: ["who invented zero", "zero in mathematics", "aryabhata", "brahmagupta", "origin of zero"],
+        tanglishKeywords: ["zero yar kandupidichadhu", "poojiyam kandupidithathu yaaru", "aryabhata zero"],
+        question: "Who invented Zero in Mathematics?",
+        answer: "Ancient Indian mathematicians formulated the modern concept of Zero: **Aryabhata** first established zero as a placeholder in the decimal system, while **Brahmagupta** in 628 CE wrote the foundational mathematical rules for arithmetic operations with **Zero (Shunya)**."
+      },
+      {
+        id: "constitution_of_india",
+        category: "India Facts",
+        keywords: ["constitution of india", "father of indian constitution", "dr br ambedkar", "longest written constitution"],
+        tanglishKeywords: ["india sattam pathi sollu", "constitution yar ezhuthinadhu", "ambedkar pathi sollu"],
+        question: "What is special about the Constitution of India?",
+        answer: "The **Constitution of India** is the longest written sovereign national constitution in the world. Adopted on **January 26, 1950** (celebrated as Republic Day), its Drafting Committee was chaired by **Dr. B.R. Ambedkar**, widely revered as the 'Chief Architect of the Indian Constitution'."
+      },
+      {
+        id: "green_revolution_india",
+        category: "India Facts",
+        keywords: ["green revolution india", "ms swaminathan", "father of green revolution", "agriculture india"],
+        tanglishKeywords: ["green revolution na enna", "ms swaminathan yaaru", "pasumai puratchi"],
+        question: "What was the Green Revolution in India?",
+        answer: "The **Green Revolution** in the 1960s transformed India from a food-deficient nation into a self-sufficient agricultural powerhouse. Agronomist **Dr. M.S. Swaminathan**, the 'Father of India's Green Revolution', introduced high-yielding variety (HYV) wheat and rice seeds alongside modernized irrigation techniques."
+      },
+      {
+        id: "chola_dynasty_temples",
+        category: "India Facts",
+        keywords: ["great living chola temples", "thanjavur temple", "rajaraja chola", "brihadisvara temple", "chola empire"],
+        tanglishKeywords: ["thanjavur periya kovil", "rajaraja cholan", "chola temples pathi sollu", "brihadisvara kovil"],
+        question: "Tell me about the Great Living Chola Temples & Thanjavur Brihadisvara.",
+        answer: "The **Brihadisvara Temple** in Thanjavur, built by Chola Emperor **Raja Raja Chola I** around 1010 CE, is a UNESCO World Heritage monument. It features a massive 66-meter high granite *Vimana* (tower) crowned with an 80-tonne single granite capstone, celebrated as a masterpiece of ancient engineering."
+      },
+      {
+        id: "indian_rupee_symbol",
+        category: "India Facts",
+        keywords: ["indian rupee symbol", "rupee symbol designer", "d udaya kumar", "inr symbol"],
+        tanglishKeywords: ["rupee symbol yar design pannadhu", "inr symbol design panniyavar yaaru"],
+        question: "Who designed the Indian Rupee symbol (₹)?",
+        answer: "The official Indian Rupee symbol (**₹**) was designed by Indian academic and designer **Dr. D. Udaya Kumar** (from Tamil Nadu). It combines the Devanagari letter 'र' (Ra) and the Roman capital 'R' with two parallel horizontal stripes representing the Indian tricolor flag."
+      },
+
+      // ---------------- HEALTH & WELLNESS TIPS (10 Entries) ----------------
+      {
+        id: "eye_strain_rule",
+        category: "Health & Wellness",
+        keywords: ["eye strain tip", "20-20-20 rule", "computer eye strain", "screen fatigue tips", "dry eyes computer"],
+        tanglishKeywords: ["kann valikuthu tip", "eye strain thadukka enna panradhu", "screen time tips", "kann valikama irukka"],
+        question: "How do I prevent computer eye strain (20-20-20 Rule)?",
+        answer: "Follow the **20-20-20 Rule**:\n• Every **20 minutes** of screen usage,\n• Take a **20-second break**,\n• Focus on an object at least **20 feet (6 meters)** away.\n*Extra tips:* Remember to blink frequently, maintain 50–70cm screen distance, and use warm display lighting during late nights."
+      },
+      {
+        id: "water_hydration",
+        category: "Health & Wellness",
+        keywords: ["how much water to drink", "daily water intake", "hydration tips", "drinking water benefits", "dehydration signs"],
+        tanglishKeywords: ["thanni evlo kudikanum", "water intake tips", "hydration pathi sollu", "thanni kudi tips"],
+        question: "How much water should I drink daily?",
+        answer: "Health experts generally recommend drinking approximately **2.5 to 3.5 liters (8–10 glasses)** of water per day for adults. Adequate hydration aids digestion, boosts cognitive focus, maintains skin elasticity, regulates body temperature, and prevents kidney stones."
+      },
+      {
+        id: "sleep_hygiene",
+        category: "Health & Wellness",
+        keywords: ["sleep tips", "how to sleep better", "insomnia tips", "sleep hygiene", "7 hours sleep"],
+        tanglishKeywords: ["nalla thoonguradhukku tips", "sleep vara maatikidhu", "thoonga tips", "nalla thoongam"],
+        question: "What are effective tips for better quality sleep?",
+        answer: "1. **Consistent Sleep Schedule:** Go to bed and wake up at the exact same time every day, even on weekends.\n2. **Digital Curfew:** Turn off smartphones, tablets, and laptops 45–60 minutes before bedtime.\n3. **Optimal Environment:** Keep your bedroom dark, quiet, and comfortably cool (around 18–21°C).\n4. **Avoid Stimulants:** Skip heavy meals, caffeine, and nicotine at least 4–6 hours before sleeping."
+      },
+      {
+        id: "posture_ergonomics",
+        category: "Health & Wellness",
+        keywords: ["good posture", "sitting ergonomics", "back pain desk job", "ergonomic chair", "neck pain computer"],
+        tanglishKeywords: ["back pain tips", "ergonomics pathi sollu", "correct posture epdi", "mudhuguvalli thadukka"],
+        question: "How can I maintain good posture and ergonomics while working?",
+        answer: "1. Align the top of your computer monitor at or slightly below eye level.\n2. Keep your feet flat on the floor with thighs parallel to the ground.\n3. Ensure your lower back is firmly supported with lumbar support.\n4. Take a 2-minute active standing and stretching micro-break every 45–60 minutes."
+      },
+      {
+        id: "stress_management",
+        category: "Health & Wellness",
+        keywords: ["reduce stress", "stress relief", "anxiety tips", "deep breathing 4-7-8", "mindfulness", "calm mind"],
+        tanglishKeywords: ["stress kuraikka enna seiyanum", "tension thagaikka tips", "mind relax panna", "stress relief tips"],
+        question: "What are fast, effective ways to reduce stress and anxiety?",
+        answer: "Try the clinically proven **4-7-8 Relaxing Breath Technique**:\n• Inhale quietly through your nose for **4 seconds**\n• Hold your breath gently for **7 seconds**\n• Exhale completely through your mouth with a whoosh for **8 seconds**\nRepeat 4 cycles. This instantly activates your parasympathetic nervous system, lowering heart rate and cortisol levels."
+      },
+      {
+        id: "daily_walking_exercise",
+        category: "Health & Wellness",
+        keywords: ["benefits of walking", "10000 steps daily", "daily exercise benefits", "cardio health", "walking for weight loss"],
+        tanglishKeywords: ["walking panna enna labam", "daily exercise tips", "nadapathal nanmaigal"],
+        question: "What are the health benefits of daily walking?",
+        answer: "Walking 7,000 to 10,000 steps (or 30 minutes of brisk walking) daily delivers immense benefits:\n• Strengthens cardiovascular and heart health\n• Regulates blood sugar levels and insulin sensitivity\n• Boosts mood and releases endorphins to fight depression\n• Improves joint mobility and burns excess calories."
+      },
+      {
+        id: "balanced_diet",
+        category: "Health & Wellness",
+        keywords: ["balanced diet", "healthy nutrition", "macronutrients", "proteins carbs fats", "healthy eating plate"],
+        tanglishKeywords: ["balanced diet na enna", "nalla saapadu tips", "diet plan tips"],
+        question: "What constitutes a healthy, balanced diet?",
+        answer: "Follow the **Healthy Eating Plate** guideline:\n• **50% of your plate:** Colorful vegetables, greens, and fresh fruits\n• **25% of your plate:** Whole grains (brown rice, oats, whole wheat, millets)\n• **25% of your plate:** Healthy protein sources (legumes, lentils, paneer, eggs, fish, tofu)\n• Stay hydrated with water and limit ultra-processed sugars and trans fats."
+      },
+      {
+        id: "green_tea_benefits",
+        category: "Health & Wellness",
+        keywords: ["benefits of green tea", "antioxidants in green tea", "egcg green tea", "weight loss tea"],
+        tanglishKeywords: ["green tea benefits enna", "green tea kudikuradhala nanmaigal"],
+        question: "What are the proven health benefits of Green Tea?",
+        answer: "Green tea is rich in polyphenols and **EGCG (Epigallocatechin gallate)** antioxidants. Benefits include boosting metabolic rate, supporting brain alertness via L-Theanine without jitters, promoting cardiovascular health, and fighting cellular oxidative stress."
+      },
+      {
+        id: "mental_health_mindfulness",
+        category: "Health & Wellness",
+        keywords: ["mental health tips", "mindfulness meditation", "how to meditate", "emotional wellbeing"],
+        tanglishKeywords: ["mental health pathi sollu", "meditation eppadi panradhu", "mana nalam"],
+        question: "How can I improve mental health and mindfulness?",
+        answer: "1. Practice 10 minutes of daily mindfulness meditation focusing on your breath.\n2. Journal 3 things you are grateful for each morning or evening.\n3. Connect with friends and loved ones regularly.\n4. Avoid doomscrolling on social media."
+      },
+      {
+        id: "digital_detox",
+        category: "Health & Wellness",
+        keywords: ["digital detox", "screen addiction", "how to reduce screen time", "phone addiction tips"],
+        tanglishKeywords: ["phone usage kuraikka tips", "digital detox pathi sollu", "screen time kuraikka"],
+        question: "How do I do a simple Digital Detox?",
+        answer: "1. Turn off non-essential notifications on social media apps.\n2. Keep your phone out of the bedroom while sleeping.\n3. Establish 'No Phone' meal zones.\n4. Replace screen scrolling with physical hobbies like reading, walking, or sports."
+      },
+
+      // ---------------- GENERAL KNOWLEDGE & WORLD (12 Entries) ----------------
+      {
+        id: "largest_ocean",
+        category: "General Knowledge",
+        keywords: ["largest ocean", "biggest ocean in the world", "pacific ocean", "deepest ocean"],
+        tanglishKeywords: ["periya ocean edhu", "ulagathil periya kadal edhu", "pacific kadal"],
+        question: "What is the largest ocean in the world?",
+        answer: "The **Pacific Ocean** is the largest and deepest ocean on Earth, covering more than 30% of the Earth's total surface area (over 165 million square kilometers) and containing the Mariana Trench, the deepest point on Earth."
+      },
+      {
+        id: "tallest_mountain",
+        category: "General Knowledge",
+        keywords: ["tallest mountain", "highest peak on earth", "mount everest height", "himalayas peak"],
+        tanglishKeywords: ["ulagathil uyaramaana malai edhu", "mount everest height evlo", "everest sikaram"],
+        question: "What is the tallest mountain in the world?",
+        answer: "**Mount Everest**, situated in the Himalayas on the border of Nepal and Tibet (China), is Earth's highest mountain above sea level at **8,848.86 meters (29,031.7 feet)**."
+      },
+      {
+        id: "inventor_www",
+        category: "General Knowledge",
+        keywords: ["who invented www", "inventor of world wide web", "tim berners lee", "origin of internet web"],
+        tanglishKeywords: ["internet yar kandupidichadhu", "www yar uruvakkinadhu", "tim berners lee yaaru"],
+        question: "Who invented the World Wide Web?",
+        answer: "British computer scientist **Sir Tim Berners-Lee** invented the World Wide Web in **1989** while working at CERN, designing HTML, HTTP, and the first web browser."
+      },
+      {
+        id: "inventor_computer",
+        category: "General Knowledge",
+        keywords: ["father of computer", "who invented computer", "charles babbage", "analytical engine"],
+        tanglishKeywords: ["computer yar kandupidichadhu", "father of computer yaaru", "charles babbage yaaru"],
+        question: "Who is considered the Father of the Computer?",
+        answer: "**Charles Babbage** is celebrated as the 'Father of the Computer' for designing the Difference Engine and the mechanical general-purpose **Analytical Engine** in the 1830s."
+      },
+      {
+        id: "first_programmer",
+        category: "General Knowledge",
+        keywords: ["first computer programmer", "ada lovelace", "first programmer in history", "who wrote first code"],
+        tanglishKeywords: ["first programmer yaaru", "ada lovelace yaaru"],
+        question: "Who was the world's first computer programmer?",
+        answer: "**Ada Lovelace** (Countess of Lovelace) is universally recognized as the world's first computer programmer. In 1843, she published the first algorithm intended for Charles Babbage's Analytical Engine."
+      },
+      {
+        id: "speed_of_sound",
+        category: "General Knowledge",
+        keywords: ["speed of sound", "mach 1", "speed of sound in air", "how fast does sound travel"],
+        tanglishKeywords: ["satham speed evlo", "speed of sound evlo", "oli vegam"],
+        question: "What is the Speed of Sound?",
+        answer: "The speed of sound in dry air at 20°C (68°F) at sea level is approximately **343 meters per second** (1,235 km/h or 767 mph), also designated as **Mach 1**."
+      },
+      {
+        id: "blood_groups_universal",
+        category: "General Knowledge",
+        keywords: ["universal donor", "universal recipient", "blood groups", "o negative blood", "ab positive blood"],
+        tanglishKeywords: ["universal donor blood edhu", "blood groups pathi sollu", "raththa vagai"],
+        question: "Which blood type is the Universal Donor and Universal Recipient?",
+        answer: "• **Universal Red Blood Cell Donor:** **O Negative (O-)** can be transfused to patients of any blood type.\n• **Universal Recipient:** **AB Positive (AB+)** can receive red blood cells from any blood group."
+      },
+      {
+        id: "great_wall_china",
+        category: "General Knowledge",
+        keywords: ["great wall of china", "how long is great wall of china", "wonders of the world"],
+        tanglishKeywords: ["china suvar pathi sollu", "great wall of china neelam evlo"],
+        question: "How long is the Great Wall of China?",
+        answer: "The **Great Wall of China** spans an astonishing total length of **21,196 kilometers (13,171 miles)** across northern China, built over multiple centuries by successive Chinese dynasties to protect against invasions."
+      },
+      {
+        id: "taj_mahal_facts",
+        category: "General Knowledge",
+        keywords: ["taj mahal", "who built taj mahal", "shah jahan", "seven wonders of the world", "agra monuments"],
+        tanglishKeywords: ["taj mahal pathi sollu", "taj mahal yar kattinadhu", "shah jahan taj mahal"],
+        question: "Who built the Taj Mahal and why?",
+        answer: "The **Taj Mahal** in Agra, India, was commissioned in 1632 by the Mughal Emperor **Shah Jahan** as an ivory-white marble mausoleum for his beloved wife **Mumtaz Mahal**. It is a UNESCO World Heritage site and one of the New 7 Wonders of the World."
+      },
+      {
+        id: "earth_seasons",
+        category: "General Knowledge",
+        keywords: ["what causes seasons", "why do we have seasons", "earth axial tilt", "summer winter why"],
+        tanglishKeywords: ["seasons eppadi varudhu", "summer winter eppadi aagudhu"],
+        question: "What causes seasons on Earth?",
+        answer: "Seasons are caused by the **23.5-degree axial tilt of the Earth** relative to its orbital plane around the Sun—NOT by Earth's distance from the Sun. When a hemisphere tilts toward the Sun, it experiences Summer; when tilted away, it experiences Winter."
+      },
+      {
+        id: "periodic_table",
+        category: "General Knowledge",
+        keywords: ["periodic table", "how many elements in periodic table", "dmitri mendeleev", "first element periodic table"],
+        tanglishKeywords: ["periodic table pathi sollu", "elements ethanai irukku", "mendeleev periodic table"],
+        question: "What is the Periodic Table and how many elements does it have?",
+        answer: "The **Periodic Table of Elements**, originally devised by Russian chemist **Dmitri Mendeleev** in 1869, arranges chemical elements by atomic number and recurring chemical properties. It currently contains **118 confirmed elements**, starting with Hydrogen (atomic number 1) and ending with Oganesson (118)."
+      },
+      {
+        id: "languages_world",
+        category: "General Knowledge",
+        keywords: ["most spoken language in the world", "how many languages in the world", "english vs mandarin"],
+        tanglishKeywords: ["ulagathil adhigam pesapadum mozhi edhu", "ethanai mozhigal irukku"],
+        question: "What are the most spoken languages in the world?",
+        answer: "1. **English:** ~1.45+ billion total speakers (native + non-native)\n2. **Mandarin Chinese:** ~1.12+ billion total speakers (largest native speaker count)\n3. **Hindi:** ~610+ million speakers\n4. **Spanish:** ~550+ million speakers"
+      }
+    ];
+
+    // ==========================================================================
+    // 2. SMALL TALK, JOKES & MOTIVATIONAL QUOTES
+    // ==========================================================================
+    const JOKES = [
+      "Why do programmers prefer dark mode? Because light attracts bugs! 🐛",
+      "There are only 10 types of people in the world: those who understand binary, and those who don't. 😄",
+      "Why was the JavaScript developer sad? Because they didn't know how to 'null' their feelings! ☕",
+      "A SQL query walks into a bar, walks up to two tables and asks: 'Can I join you?' 🍺",
+      "Why did the neural network go to school? To improve its weights and reduce loss! 🧠",
+      "Debugging is like being the detective in a crime movie where you are also the murderer. 🕵️‍♂️"
+    ];
+
+    const MOTIVATIONAL_QUOTES = [
+      "“The best way to predict the future is to invent it.” — Alan Kay",
+      "“Success is not final, failure is not fatal: it is the courage to continue that counts.” — Winston Churchill",
+      "“Simplicity is the soul of efficiency.” — Austin Freeman",
+      "“It always seems impossible until it's done.” — Nelson Mandela",
+      "“Do what you can, with what you have, where you are.” — Theodore Roosevelt"
+    ];
+
+    // ==========================================================================
+    // 3. REAL-TIME TIME, DATE & GREETING ENGINE
+    // ==========================================================================
+    const RealTimeEngine = {
+      getCurrentTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        return `🕒 The current local time is **${timeString}**.`;
+      },
+
+      getCurrentDate() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateString = now.toLocaleDateString(undefined, options);
+        return `📅 Today's date is **${dateString}**.`;
+      },
+
+      getCurrentDay() {
+        const now = new Date();
+        const day = now.toLocaleDateString(undefined, { weekday: 'long' });
+        return `🗓️ Today is **${day}**.`;
+      },
+
+      getCurrentMonth() {
+        const now = new Date();
+        const month = now.toLocaleDateString(undefined, { month: 'long' });
+        return `🗓️ The current month is **${month}**.`;
+      },
+
+      getCurrentYear() {
+        const now = new Date();
+        return `🗓️ The current year is **${now.getFullYear()}**.`;
+      },
+
+      getTimeGreeting() {
+        const hour = new Date().getHours();
+        if (hour >= 4 && hour < 12) {
+          return "🌅 Good morning! Hope you have a productive and energized day ahead. How can I help you today?";
+        } else if (hour >= 12 && hour < 17) {
+          return "☀️ Good afternoon! Hope your day is going smoothly. What would you like to explore?";
+        } else if (hour >= 17 && hour < 22) {
+          return "🌇 Good evening! How can I assist you tonight?";
+        } else {
+          return "🌙 Hello night owl! Hope you're having a peaceful night. How can I assist you?";
+        }
+      }
+    };
+
+    // ==========================================================================
+    // 4. NATURAL LANGUAGE SAFE MATH CALCULATOR
+    // ==========================================================================
+    const MathEngine = {
+      /**
+       * Tries to detect and calculate arithmetic or natural language math queries
+       */
+      evaluate(rawInput) {
+        let input = rawInput.toLowerCase().trim();
+
+        // 1. Percentage: "20% of 500" or "what is 15 percent of 800"
+        const percentMatch = input.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*(?:of|\*)\s*(\d+(?:\.\d+)?)/i);
+        if (percentMatch) {
+          const rate = parseFloat(percentMatch[1]);
+          const base = parseFloat(percentMatch[2]);
+          const result = (rate / 100) * base;
+          return `🧮 **${rate}% of ${base}** = **${this.formatNumber(result)}**`;
+        }
+
+        // 2. Square Root: "sqrt of 81" or "square root of 144" or "sqrt(16)"
+        const sqrtMatch = input.match(/(?:sqrt|square\s+root)(?:\s+of|\s*\()?\s*(\d+(?:\.\d+)?)\)?/i);
+        if (sqrtMatch) {
+          const val = parseFloat(sqrtMatch[1]);
+          if (val < 0) return "⚠️ Cannot compute the square root of a negative real number.";
+          const result = Math.sqrt(val);
+          return `🧮 **√${val}** = **${this.formatNumber(result)}**`;
+        }
+
+        // 3. Cube Root: "cube root of 27"
+        const cbrtMatch = input.match(/(?:cbrt|cube\s+root)(?:\s+of|\s*\()?\s*(\d+(?:\.\d+)?)\)?/i);
+        if (cbrtMatch) {
+          const val = parseFloat(cbrtMatch[1]);
+          const result = Math.cbrt(val);
+          return `🧮 **∛${val}** = **${this.formatNumber(result)}**`;
+        }
+
+        // 4. Power: "2 ^ 8" or "2 power 8" or "2 to the power of 8"
+        const powerMatch = input.match(/(\d+(?:\.\d+)?)\s*(?:\^|\*\*|power\s+of|to\s+the\s+power\s+of|raised\s+to)\s*(\d+(?:\.\d+)?)/i);
+        if (powerMatch) {
+          const base = parseFloat(powerMatch[1]);
+          const exp = parseFloat(powerMatch[2]);
+          const result = Math.pow(base, exp);
+          return `🧮 **${base}^${exp}** = **${this.formatNumber(result)}**`;
+        }
+
+        // 5. Standard arithmetic cleanup: "what is 25 * 4", "calculate 10 + 5", "50 / 2"
+        let cleanExpr = input
+          .replace(/^(?:what\s+is|calculate|solve|evaluate|compute|math|find)\s+/i, '')
+          .replace(/x/g, '*')
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/[?!=]/g, '')
+          .trim();
+
+        // Check if string contains only safe math tokens: numbers, +, -, *, /, %, (, ), ., spaces
+        if (/^[\d\s+\-*/%().^]+$/.test(cleanExpr) && /\d/.test(cleanExpr)) {
+          try {
+            const result = this.safeCalculate(cleanExpr);
+            if (result !== null && !isNaN(result) && isFinite(result)) {
+              return `🧮 **${cleanExpr}** = **${this.formatNumber(result)}**`;
+            }
+          } catch (e) {
+            return null;
+          }
+        }
+
+        return null;
+      },
+
+      safeCalculate(expr) {
+        // Safe evaluation without eval() using Function sandbox strictly limited to arithmetic
+        expr = expr.replace(/\^/g, '**');
+        if (!/^[0-9+\-*/().\s*]+$/.test(expr)) return null;
+        try {
+          const fn = new Function(`'use strict'; return (${expr});`);
+          return fn();
+        } catch (e) {
+          return null;
+        }
+      },
+
+      formatNumber(num) {
+        if (Number.isInteger(num)) return num.toString();
+        return parseFloat(num.toFixed(6)).toString();
+      }
+    };
+
+    // ==========================================================================
+    // 5. FUZZY MATCHING & INTENT DISPATCHER
+    // ==========================================================================
+    const BotEngine = {
+      /**
+       * Process input string and generate appropriate answer
+       */
+      processMessage(rawText) {
+        const text = rawText.trim();
+        if (!text) return null;
+
+        const lower = text.toLowerCase();
+        const cleanText = lower.replace(/[^\w\s\d]/g, ' ').replace(/\s+/g, ' ').trim();
+
+        // ---------------- A. Real-Time Dynamic Queries ----------------
+        // Time queries
+        if (this.matchesAny(cleanText, ['time', 'what time', 'current time', 'what is the time', 'what time is it', 'neram enna', 'time sollu', 'ippo time enna', 'mani enna', 'time enna'])) {
+          return RealTimeEngine.getCurrentTime();
+        }
+
+        // Date queries
+        if (this.matchesAny(cleanText, ['date', 'what date', 'today date', 'todays date', 'current date', 'what is the date', 'what is today date', 'thethi enna', 'innaiku enna thethi', 'date enna'])) {
+          return RealTimeEngine.getCurrentDate();
+        }
+
+        // Day of week
+        if (this.matchesAny(cleanText, ['what day', 'which day', 'day today', 'what is today', 'which day is today', 'innaiku enna naal', 'enna kizhamai', 'today day'])) {
+          return RealTimeEngine.getCurrentDay();
+        }
+
+        // Month queries
+        if (this.matchesAny(cleanText, ['what month', 'current month', 'which month', 'this month', 'maasam enna', 'indha maasam enna'])) {
+          return RealTimeEngine.getCurrentMonth();
+        }
+
+        // Year queries
+        if (this.matchesAny(cleanText, ['what year', 'current year', 'which year', 'this year', 'varusham enna', 'indha varusham'])) {
+          return RealTimeEngine.getCurrentYear();
+        }
+
+        // Time greetings (morning / afternoon / evening)
+        if (this.matchesAny(cleanText, ['good morning', 'good afternoon', 'good evening', 'good night', 'kaalai vanakkam', 'maalai vanakkam', 'iravu vanakkam'])) {
+          return RealTimeEngine.getTimeGreeting();
+        }
+
+        // ---------------- B. Calculator Intent ----------------
+        const mathResult = MathEngine.evaluate(text);
+        if (mathResult) {
+          return mathResult;
+        }
+
+        // ---------------- C. Small Talk & Identity ----------------
+        // Identity / Name
+        if (this.matchesAny(cleanText, ['who are you', 'your name', 'what is your name', 'whats your name', 'un peyer enna', 'un name enna', 'who made you', 'who created you', 'yar unna create pannadhu', 'creator', 'thisha ai'])) {
+          return "Hello! I am **THISHA AI**, your intelligent, 100% offline assistant. I was created to provide instant dynamic calculations, real-time date/time info, and a rich bilingual knowledge base!";
+        }
+
+        // Greetings
+        if (this.matchesAny(cleanText, ['hello', 'hi', 'hey', 'vanakkam', 'namaste', 'halo', 'sup', 'yo', 'machan', 'bro', 'thala'])) {
+          return "Vanakkam! 🙏 Hello! How can I assist you today? Feel free to ask about date, time, math, AI, programming, science, or health!";
+        }
+
+        // How are you / Tanglish
+        if (this.matchesAny(cleanText, ['how are you', 'how r u', 'eppadi irukinga', 'epdi iruka', 'enna panra', 'sowkiyama', 'how do you do'])) {
+          return "Naan romba nalla iruken! 😊 I am running fast, offline, and ready to help you. How are you doing today?";
+        }
+
+        // Jokes
+        if (this.matchesAny(cleanText, ['tell me a joke', 'joke', 'make me laugh', 'funny', 'joke sollu', 'sirika vai', 'jokes'])) {
+          const randomJoke = JOKES[Math.floor(Math.random() * JOKES.length)];
+          return `😄 **Here's a joke for you:**\n\n${randomJoke}`;
+        }
+
+        // Motivational Quotes
+        if (this.matchesAny(cleanText, ['quote', 'motivate me', 'motivation', 'inspirational quote', 'motivational quote', 'kavithai', 'quote sollu'])) {
+          const randomQuote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+          return `✨ **Inspiration for you:**\n\n${randomQuote}`;
+        }
+
+        // Thanks / Appreciation
+        if (this.matchesAny(cleanText, ['thank you', 'thanks', 'nandri', 'romba nandri', 'thank u', 'thx', 'super', 'awesome', 'great job'])) {
+          return "You're very welcome! Romba magizhchi! Let me know if you need help with anything else. 😊";
+        }
+
+        // Bye / Goodbye
+        if (this.matchesAny(cleanText, ['bye', 'goodbye', 'see you', 'poitu varen', 'tata', 'exit', 'quit', 'bye bye'])) {
+          return "Goodbye! Poitu vanga, take care! Have a wonderful and productive time ahead! 👋✨";
+        }
+
+        // What can you do / Help
+        if (this.matchesAny(cleanText, ['what can you do', 'help', 'features', 'help me', 'guide', 'capabilities', 'enna panna mudiyum'])) {
+          return "Here is what I can do for you 100% offline:\n\n" +
+            "• **Dynamic Real-Time Info:** Ask for current *time*, *date*, *day*, or *month*.\n" +
+            "• **Math Calculator:** Try `what is 25 * 4`, `sqrt of 81`, or `20% of 500`.\n" +
+            "• **65+ Knowledge Base Topics:** AI, Python, React, Science, Space, ISRO, India facts, Health tips.\n" +
+            "• **Small Talk & Fun:** Jokes, quotes, greetings in English & Tanglish!\n\n" +
+            "Type any query or tap one of the suggestion chips above!";
+        }
+
+        // ---------------- D. Knowledge Base Fuzzy & Keyword Match ----------------
+        const kbResult = this.searchKnowledgeBase(cleanText);
+        if (kbResult) {
+          return kbResult;
+        }
+
+        // ---------------- E. Strict Fallback ----------------
+        return "I don't know that yet. Try asking about time, date, math, or AI basics.";
+      },
+
+      /**
+       * Check if input matches any target phrase closely
+       */
+      matchesAny(input, phraseList) {
+        for (const phrase of phraseList) {
+          if (input === phrase) return true;
+          if (input.startsWith(phrase + ' ') || input.endsWith(' ' + phrase) || input.includes(' ' + phrase + ' ')) {
+            return true;
+          }
+        }
+        return false;
+      },
+
+      /**
+       * Knowledge Base Search with Keyword Scoring and Fuzzy Levenshtein Distance
+       */
+      searchKnowledgeBase(cleanInput) {
+        const inputTokens = cleanInput.split(' ').filter(t => t.length > 1);
+        if (inputTokens.length === 0) return null;
+
+        // Common stopwords to exclude from individual token weight
+        const stopWords = new Set(['what', 'is', 'the', 'a', 'an', 'tell', 'me', 'about', 'explain', 'in', 'of', 'for', 'to', 'how', 'why', 'does', 'do', 'are', 'pathi', 'solla', 'solravanga', 'enna', 'edhu']);
+
+        let bestMatch = null;
+        let highestScore = 0;
+
+        for (const entry of KNOWLEDGE_BASE) {
+          let score = 0;
+
+          // 1. Exact or Substring match on Question
+          const qClean = entry.question.toLowerCase().replace(/[^\w\s\d]/g, '');
+          if (qClean === cleanInput) {
+            score += 100;
+          } else if (qClean.includes(cleanInput) || cleanInput.includes(qClean)) {
+            score += 60;
+          }
+
+          // 2. Keyword Matches (English & Tanglish)
+          const allKeywords = [...entry.keywords, ...(entry.tanglishKeywords || [])];
+          for (const kw of allKeywords) {
+            const kwClean = kw.toLowerCase().replace(/[^\w\s\d]/g, '');
+            if (cleanInput === kwClean) {
+              score += 80;
+            } else if (cleanInput.includes(kwClean)) {
+              score += 45;
+            } else {
+              // Word level match
+              const kwWords = kwClean.split(' ');
+              let matchedWords = 0;
+              for (const w of kwWords) {
+                if (stopWords.has(w)) continue;
+                if (inputTokens.includes(w)) {
+                  matchedWords++;
+                } else {
+                  // Fuzzy match token
+                  for (const token of inputTokens) {
+                    if (this.levenshteinSimilarity(w, token) >= 0.8) {
+                      matchedWords += 0.85;
+                      break;
+                    }
+                  }
+                }
+              }
+              if (matchedWords > 0) {
+                score += (matchedWords / kwWords.length) * 35;
+              }
+            }
+          }
+
+          // 3. Category Bonus
+          if (cleanInput.includes(entry.category.toLowerCase())) {
+            score += 15;
+          }
+
+          if (score > highestScore) {
+            highestScore = score;
+            bestMatch = entry;
+          }
+        }
+
+        // Threshold score for match confidence (ensures we never return false positives)
+        const CONFIDENCE_THRESHOLD = 28;
+        if (highestScore >= CONFIDENCE_THRESHOLD && bestMatch) {
+          return `${bestMatch.answer}`;
+        }
+
+        return null;
+      },
+
+      /**
+       * Levenshtein Distance & Similarity (0.0 to 1.0) for handling typos
+       */
+      levenshteinSimilarity(s1, s2) {
+        if (s1 === s2) return 1.0;
+        const len1 = s1.length;
+        const len2 = s2.length;
+        if (len1 === 0 || len2 === 0) return 0.0;
+
+        const track = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+        for (let i = 0; i <= len1; i += 1) track[0][i] = i;
+        for (let j = 0; j <= len2; j += 1) track[j][0] = j;
+
+        for (let j = 1; j <= len2; j += 1) {
+          for (let i = 1; i <= len1; i += 1) {
+            const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
+            track[j][i] = Math.min(
+              track[j][i - 1] + 1, // deletion
+              track[j - 1][i] + 1, // insertion
+              track[j - 1][i - 1] + indicator // substitution
+            );
+          }
+        }
+
+        const distance = track[len2][len1];
+        const maxLen = Math.max(len1, len2);
+        return (maxLen - distance) / maxLen;
+      }
+    };
+
+    // ==========================================================================
+    // 6. UI CONTROLLER & LOCAL STORAGE MANAGEMENT
+    // ==========================================================================
+    const UIController = {
+      chatMessagesEl: document.getElementById('chatMessages'),
+      welcomeHeroEl: document.getElementById('welcomeHero'),
+      chatFormEl: document.getElementById('chatForm'),
+      userInputEl: document.getElementById('userInput'),
+      sendBtnEl: document.getElementById('sendBtn'),
+      typingIndicatorEl: document.getElementById('typingIndicator'),
+      clearChatBtnEl: document.getElementById('clearChatBtn'),
+      infoBtnEl: document.getElementById('infoBtn'),
+      infoModalEl: document.getElementById('infoModal'),
+      closeModalBtnEl: document.getElementById('closeModalBtn'),
+      toastEl: document.getElementById('toast'),
+      toastMsgEl: document.getElementById('toastMsg'),
+
+      STORAGE_KEY: 'thisha_ai_chat_history_v1',
+      chatHistory: [],
+
+      init() {
+        this.loadHistory();
+        this.bindEvents();
+        this.updateSendButtonState();
+      },
+
+      bindEvents() {
+        // Form submission
+        this.chatFormEl.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.handleSendMessage();
+        });
+
+        // Textarea input & keyboard shortcuts
+        this.userInputEl.addEventListener('input', () => {
+          this.autoResizeTextarea();
+          this.updateSendButtonState();
+        });
+
+        this.userInputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.handleSendMessage();
+          }
+        });
+
+        // Clear chat
+        this.clearChatBtnEl.addEventListener('click', () => {
+          if (confirm("Are you sure you want to clear the chat history?")) {
+            this.clearHistory();
+          }
+        });
+
+        // Modal triggers
+        this.infoBtnEl.addEventListener('click', () => {
+          this.infoModalEl.classList.add('active');
+        });
+
+        this.closeModalBtnEl.addEventListener('click', () => {
+          this.infoModalEl.classList.remove('active');
+        });
+
+        this.infoModalEl.addEventListener('click', (e) => {
+          if (e.target === this.infoModalEl) {
+            this.infoModalEl.classList.remove('active');
+          }
+        });
+
+        // Prompt Chips Click Delegations
+        document.addEventListener('click', (e) => {
+          const chip = e.target.closest('.chip-btn');
+          if (chip && chip.dataset.query) {
+            this.userInputEl.value = chip.dataset.query;
+            this.autoResizeTextarea();
+            this.handleSendMessage();
+          }
+        });
+      },
+
+      autoResizeTextarea() {
+        this.userInputEl.style.height = 'auto';
+        this.userInputEl.style.height = Math.min(this.userInputEl.scrollHeight, 140) + 'px';
+      },
+
+      updateSendButtonState() {
+        const text = this.userInputEl.value.trim();
+        this.sendBtnEl.disabled = text.length === 0;
+      },
+
+      handleSendMessage() {
+        const text = this.userInputEl.value.trim();
+        if (!text) return;
+
+        // Hide welcome banner when active conversation starts
+        if (this.welcomeHeroEl) {
+          this.welcomeHeroEl.style.display = 'none';
+        }
+
+        // 1. Render User Message
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        this.appendMessage('user', text, timestamp);
+        this.saveMessageToHistory('user', text, timestamp);
+
+        // Reset Input
+        this.userInputEl.value = '';
+        this.autoResizeTextarea();
+        this.updateSendButtonState();
+
+        // 2. Show Typing Indicator with realistic brief delay
+        this.showTypingIndicator();
+
+        setTimeout(() => {
+          const botReply = BotEngine.processMessage(text);
+          this.hideTypingIndicator();
+          const botTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          this.appendMessage('bot', botReply, botTimestamp);
+          this.saveMessageToHistory('bot', botReply, botTimestamp);
+        }, 320 + Math.random() * 200);
+      },
+
+      appendMessage(sender, text, timestamp) {
+        const row = document.createElement('div');
+        row.className = `message-row ${sender}`;
+
+        const isBot = sender === 'bot';
+        
+        // Avatar SVG
+        const avatarSvg = isBot
+          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>`
+          : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+
+        // Format Markdown text (bold, code blocks, lists)
+        const formattedHtml = this.formatMarkdown(text);
+
+        const actionsHtml = isBot
+          ? `
+            <button class="copy-msg-btn" title="Copy response">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy</span>
+            </button>
+            <button class="speech-btn" title="Speak text aloud">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+              <span>Speak</span>
+            </button>
+          `
+          : '';
+
+        row.innerHTML = `
+          <div class="avatar-icon ${isBot ? 'bot-avatar' : 'user-avatar'}">
+            ${avatarSvg}
+          </div>
+          <div class="message-content-wrapper">
+            <div class="message-bubble">
+              ${formattedHtml}
+            </div>
+            <div class="message-meta">
+              <span>${timestamp}</span>
+              ${actionsHtml}
+            </div>
+          </div>
+        `;
+
+        // Bind Copy & Speech Actions
+        if (isBot) {
+          const copyBtn = row.querySelector('.copy-msg-btn');
+          if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+              navigator.clipboard.writeText(text).then(() => {
+                this.showToast('Copied to clipboard!');
+              }).catch(() => {
+                this.showToast('Unable to copy');
+              });
+            });
+          }
+
+          const speechBtn = row.querySelector('.speech-btn');
+          if (speechBtn && 'speechSynthesis' in window) {
+            speechBtn.addEventListener('click', () => {
+              window.speechSynthesis.cancel();
+              const plainText = text.replace(/[*#`_]/g, '');
+              const utterance = new SpeechSynthesisUtterance(plainText);
+              utterance.rate = 1.0;
+              window.speechSynthesis.speak(utterance);
+              this.showToast('Speaking...');
+            });
+          }
+        }
+
+        this.chatMessagesEl.appendChild(row);
+        this.scrollToBottom();
+      },
+
+      formatMarkdown(content) {
+        if (!content) return '';
+        let html = content
+          // Code blocks
+          .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+          // Inline code
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          // Bold
+          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+          // Line breaks
+          .replace(/\n\n/g, '</p><p>')
+          .replace(/\n/g, '<br/>');
+
+        // Lists
+        html = html.replace(/(?:^|<br\/>)•\s*(.*?)(?=(?:<br\/>|$))/g, '<li>$1</li>');
+        if (html.includes('<li>')) {
+          html = html.replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>');
+        }
+
+        return `<p>${html}</p>`;
+      },
+
+      showTypingIndicator() {
+        this.typingIndicatorEl.style.display = 'flex';
+        this.chatMessagesEl.appendChild(this.typingIndicatorEl);
+        this.scrollToBottom();
+      },
+
+      hideTypingIndicator() {
+        this.typingIndicatorEl.style.display = 'none';
+      },
+
+      scrollToBottom() {
+        this.chatMessagesEl.scrollTop = this.chatMessagesEl.scrollHeight;
+      },
+
+      showToast(msg) {
+        this.toastMsgEl.textContent = msg;
+        this.toastEl.classList.add('show');
+        setTimeout(() => {
+          this.toastEl.classList.remove('show');
+        }, 2200);
+      },
+
+      saveMessageToHistory(sender, text, timestamp) {
+        this.chatHistory.push({ sender, text, timestamp });
+        try {
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.chatHistory));
+        } catch (e) {
+          console.warn('LocalStorage unavailable or full.');
+        }
+      },
+
+      loadHistory() {
+        try {
+          const stored = localStorage.getItem(this.STORAGE_KEY);
+          if (stored) {
+            this.chatHistory = JSON.parse(stored);
+            if (Array.isArray(this.chatHistory) && this.chatHistory.length > 0) {
+              if (this.welcomeHeroEl) {
+                this.welcomeHeroEl.style.display = 'none';
+              }
+              this.chatHistory.forEach(item => {
+                this.appendMessage(item.sender, item.text, item.timestamp);
+              });
+            }
+          }
+        } catch (e) {
+          this.chatHistory = [];
+        }
+      },
+
+      clearHistory() {
+        try {
+          localStorage.removeItem(this.STORAGE_KEY);
+        } catch (e) {}
+        this.chatHistory = [];
+        
+        // Remove all message rows
+        const rows = this.chatMessagesEl.querySelectorAll('.message-row');
+        rows.forEach(r => r.remove());
+
+        // Restore welcome hero
+        if (this.welcomeHeroEl) {
+          this.welcomeHeroEl.style.display = 'block';
+        }
+        
+        this.showToast('Chat history cleared');
+      }
+    };
+
+    // Initialize application when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      UIController.init();
+    });
+  </script>
+</body>
+</html>
